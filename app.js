@@ -104,13 +104,13 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const request = require('request')
-const AIMLParser = require('aimlparser')
+const AIMLInterpreter = require('aimlinterpreter')
 
 const app = express()
 const port = process.env.PORT || 4000
-const aimlParser = new AIMLParser({ name:'HelloBot' })
+const aimlInterpreter = new AIMLInterpreter({ name:'WarongkornBot' })
 
-aimlParser.load(['./test-aiml.xml'])
+aimlInterpreter.loadAIMLFilesIntoArray(['./test-aiml.xml'])
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
@@ -118,10 +118,13 @@ app.use(bodyParser.json())
 app.post('/webhook', (req, res) => {
     let reply_token = req.body.events[0].replyToken
     let msg = req.body.events[0].message.text
-    aimlParser.getResult(msg, (answer, wildCardArray, input) => {
-        reply(reply_token, answer)
-    })
-    res.sendStatus(200)
+    aimlInterpreter.findAnswerInLoadedAIMLFiles(
+    msg,
+    (answer, wildCardArray, input) => {
+      reply(reply_token, answer)
+    }
+  )
+  res.sendStatus(200)
 })
 
 app.listen(port)
@@ -129,7 +132,7 @@ app.listen(port)
 function reply(reply_token, msg) {
     let headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer duMhSiSLxyiZ/ROTJXtEfZOZ1En2WyGbmgXnz6OkbWcvCLmcDRFi9tpzHsaSa7Gi6hRn6cFJlqMBRdYLsTDRQ54Qk3H8uwGEKlo53Ha48kE+7xDHrap+BVPPBseg2cMT5HWFlfl+r1uz557jc6EY5QdB04t89/1O/w1cDnyilFU=
+        Authorization: 'Bearer duMhSiSLxyiZ/ROTJXtEfZOZ1En2WyGbmgXnz6OkbWcvCLmcDRFi9tpzHsaSa7Gi6hRn6cFJlqMBRdYLsTDRQ54Qk3H8uwGEKlo53Ha48kE+7xDHrap+BVPPBseg2cMT5HWFlfl+r1uz557jc6EY5QdB04t89/1O/w1cDnyilFU=
     }
 
     let body = JSON.stringify({
