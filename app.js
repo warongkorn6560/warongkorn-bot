@@ -55,6 +55,9 @@
 //   )
 // }
 
+// d74fa631e540526a6e2152b614299049
+// Echo reply
+
 const express = require('express')
 const bodyParser = require('body-parser')
 const request = require('request')
@@ -63,14 +66,13 @@ const port = process.env.PORT || 4000
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.post('/webhook', (req, res) => {
-  res.sendStatus(200)
-  return
   let reply_token = req.body.events[0].replyToken
-  reply(reply_token)
+  let msg = req.body.events[0].message.text
+  reply(reply_token, msg)
   res.sendStatus(200)
 })
 app.listen(port)
-function reply(reply_token) {
+function reply(reply_token, msg) {
   let headers = {
     'Content-Type': 'application/json',
     Authorization: 'Bearer d74fa631e540526a6e2152b614299049',
@@ -80,11 +82,7 @@ function reply(reply_token) {
     messages: [
       {
         type: 'text',
-        text: 'Hello',
-      },
-      {
-        type: 'text',
-        text: 'How are you?',
+        text: msg,
       },
     ],
   })
