@@ -63,17 +63,17 @@ const port = process.env.PORT || 4000
 const aimlInterpreter = new AIMLInterpreter({ name: 'HelloBot', age: '25' })
 
 aimlInterpreter.loadAIMLFilesIntoArray(['./test-aiml.xml'])
-const aimlPromise = function (question) {
-  return new Promise(function (resolve, reject) {
-    aimlInterpreter.findAnswerInLoadedAIMLFiles(
-      question,
-      function (answer, wildCardArray, input) {
-        return resolve(answer)
-        //should also handle reject!!! this is demo code only :)
-      }
-    )
-  })
-}
+// const aimlPromise = function (question) {
+//   return new Promise(function (resolve, reject) {
+//     aimlInterpreter.findAnswerInLoadedAIMLFiles(
+//       question,
+//       function (answer, wildCardArray, input) {
+//         return resolve(answer)
+//         //should also handle reject!!! this is demo code only :)
+//       }
+//     )
+//   })
+// }
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
@@ -108,12 +108,12 @@ app.post('/webhook', (req, res) => {
   let reply_token = req.body.events[0].replyToken
   let msg = req.body.events[0].message.text
 
-  aimlPromise(msg).then((res) => reply(reply_token, res))
+  // aimlPromise(msg).then((res) => reply(reply_token, res))
 
-  // aimlInterpreter.findAnswerInLoadedAIMLFiles(
-  //   req.body.events[0].message.text,
-  //   (answer, wildCardArray, input) => reply(reply_token, input)
-  // )
+  aimlInterpreter.findAnswerInLoadedAIMLFiles(
+    req.body.events[0].message.text,
+    (answer, wildCardArray, input) => reply(reply_token, input)
+  )
   res.sendStatus(200)
 })
 
