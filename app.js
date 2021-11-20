@@ -62,7 +62,7 @@ const app = express()
 const port = process.env.PORT || 4000
 const aimlInterpreter = new AIMLInterpreter({ name: 'HelloBot', age: '25' })
 
-aimlInterpreter.loadAIMLFilesIntoArray(['./test.aiml.xml'])
+aimlInterpreter.loadAIMLFilesIntoArray(['./test-aiml.xml'])
 const aimlPromise = function (question) {
   return new Promise(function (resolve, reject) {
     aimlInterpreter.findAnswerInLoadedAIMLFiles(
