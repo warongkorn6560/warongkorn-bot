@@ -60,9 +60,12 @@ const AIMLInterpreter = require('aimlinterpreter')
 
 const app = express()
 const port = process.env.PORT || 4000
-const aimlInterpreter = new AIMLInterpreter({ name: 'HelloBot' })
+const aimlInterpreter = new AIMLInterpreter({ name: 'HelloBot', age: '25' })
 
 aimlInterpreter.loadAIMLFilesIntoArray(['./test.aiml.xml'])
+let callback = function (reply_token, answer) {
+  reply(reply_token, answer)
+}
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
@@ -72,7 +75,6 @@ function reply(reply_token, msg) {
     Authorization:
       'Bearer duMhSiSLxyiZ/ROTJXtEfZOZ1En2WyGbmgXnz6OkbWcvCLmcDRFi9tpzHsaSa7Gi6hRn6cFJlqMBRdYLsTDRQ54Qk3H8uwGEKlo53Ha48kE+7xDHrap+BVPPBseg2cMT5HWFlfl+r1uz557jc6EY5QdB04t89/1O/w1cDnyilFU=',
   }
-
   let body = JSON.stringify({
     replyToken: reply_token,
     messages: [
@@ -82,7 +84,6 @@ function reply(reply_token, msg) {
       },
     ],
   })
-
   request.post(
     {
       url: 'https://api.line.me/v2/bot/message/reply',
@@ -100,7 +101,7 @@ app.post('/webhook', (req, res) => {
   // let msg = req.body.events[0].message.text
   aimlInterpreter.findAnswerInLoadedAIMLFiles(
     req.body.events[0].message.text,
-    (answer, wildCardArray, input) => reply(reply_token, answer)
+    callback(reply_token, answer)
   )
   res.sendStatus(200)
 })
