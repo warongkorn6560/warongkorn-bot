@@ -1,71 +1,27 @@
 // // // Reply using AIML Parser
-// const express = require('express')
-// const bodyParser = require('body-parser')
-// const request = require('request')
-// const AIMLParser = require('aimlparser')
-
-// const app = express()
-// const port = process.env.PORT || 4000
-// const aimlParser = new AIMLParser({ name: 'WarongkornBot' })
-// aimlParser.load(['./test-aiml.xml']
-
-// app.use(bodyParser.urlencoded({ extended: false }))
-// app.use(bodyParser.json())
-
-// app.post('/webhook', (req, res) => {
-//   let reply_token = req.body.events[0].replyToken
-//   let msg = req.body.events[0].message.text
-//   aimlParser.getResult(msg, (answer, wildCardArray, input) => {
-//         reply(reply_token, answer)
-//     })
-//     res.sendStatus(200)
-// })
-
-// app.listen(port)
-// function reply(reply_token, msg) {
-//   let headers = {
-//     'Content-Type': 'application/json',
-//     Authorization:
-//       'Bearer duMhSiSLxyiZ/ROTJXtEfZOZ1En2WyGbmgXnz6OkbWcvCLmcDRFi9tpzHsaSa7Gi6hRn6cFJlqMBRdYLsTDRQ54Qk3H8uwGEKlo53Ha48kE+7xDHrap+BVPPBseg2cMT5HWFlfl+r1uz557jc6EY5QdB04t89/1O/w1cDnyilFU=',
-//   }
-
-//   let body = JSON.stringify({
-//     replyToken: reply_token,
-//     messages: [
-//       {
-//         type: 'text',
-//         text: msg,
-//       },
-//     ],
-//   })
-
-//   request.post(
-//     {
-//       url: 'https://api.line.me/v2/bot/message/reply',
-//       headers: headers,
-//       body: body,
-//     },
-//     (err, res, body) => {
-//       console.log('status = ' + res.statusCode)
-//     }
-//   )
-// }
-
-//AIML Interpreter
-
 const express = require('express')
 const bodyParser = require('body-parser')
 const request = require('request')
-const AIMLInterpreter = require('aimlinterpreter')
+const AIMLParser = require('aimlparser')
 
 const app = express()
 const port = process.env.PORT || 4000
-const aimlInterpreter = new AIMLInterpreter({ name: 'HelloBot' })
+const aimlParser = new AIMLParser({ name: 'WarongkornBot' })
+aimlParser.load(['./test-aiml.xml']
 
-aimlInterpreter.loadAIMLFilesIntoArray(['./test-aiml.xml'])
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
+app.post('/webhook', (req, res) => {
+  let reply_token = req.body.events[0].replyToken
+  // let msg = req.body.events[0].message.text
+  aimlParser.getResult(req.body.events[0].message.text, (answer, wildCardArray, input) => {
+        reply(reply_token, answer + input)
+    })
+    res.sendStatus(200)
+})
+
+app.listen(port)
 function reply(reply_token, msg) {
   let headers = {
     'Content-Type': 'application/json',
@@ -95,20 +51,64 @@ function reply(reply_token, msg) {
   )
 }
 
-app.post('/webhook', (req, res) => {
-  let reply_token = req.body.events[0].replyToken
-  // let msg = req.body.events[0].message.text
-  let test = aimlInterpreter.findAnswerInLoadedAIMLFiles(
-    req.body.events[0].message.text,
-    (answer, wildCardArray, input) => {
-      reply(reply_token, answer + ' | ' + wildCardArray + ' | ' + input)
-    }
-  )
-  reply(reply_token, test)
-  res.sendStatus(200)
-})
+//AIML Interpreter
 
-app.listen(port)
+// const express = require('express')
+// const bodyParser = require('body-parser')
+// const request = require('request')
+// const AIMLInterpreter = require('aimlinterpreter')
+
+// const app = express()
+// const port = process.env.PORT || 4000
+// const aimlInterpreter = new AIMLInterpreter({ name: 'HelloBot' })
+
+// aimlInterpreter.loadAIMLFilesIntoArray(['./test-aiml.xml'])
+// app.use(bodyParser.urlencoded({ extended: false }))
+// app.use(bodyParser.json())
+
+// function reply(reply_token, msg) {
+//   let headers = {
+//     'Content-Type': 'application/json',
+//     Authorization:
+//       'Bearer duMhSiSLxyiZ/ROTJXtEfZOZ1En2WyGbmgXnz6OkbWcvCLmcDRFi9tpzHsaSa7Gi6hRn6cFJlqMBRdYLsTDRQ54Qk3H8uwGEKlo53Ha48kE+7xDHrap+BVPPBseg2cMT5HWFlfl+r1uz557jc6EY5QdB04t89/1O/w1cDnyilFU=',
+//   }
+
+//   let body = JSON.stringify({
+//     replyToken: reply_token,
+//     messages: [
+//       {
+//         type: 'text',
+//         text: msg,
+//       },
+//     ],
+//   })
+
+//   request.post(
+//     {
+//       url: 'https://api.line.me/v2/bot/message/reply',
+//       headers: headers,
+//       body: body,
+//     },
+//     (err, res, body) => {
+//       console.log('status = ' + res.statusCode)
+//     }
+//   )
+// }
+
+// app.post('/webhook', (req, res) => {
+//   let reply_token = req.body.events[0].replyToken
+//   // let msg = req.body.events[0].message.text
+//   let test = aimlInterpreter.findAnswerInLoadedAIMLFiles(
+//     req.body.events[0].message.text,
+//     (answer, wildCardArray, input) => {
+//       reply(reply_token, answer)
+//     }
+//   )
+//   reply(reply_token, test)
+//   res.sendStatus(200)
+// })
+
+// app.listen(port)
 
 // normal reply
 // const express = require('express')
