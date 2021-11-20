@@ -2,13 +2,12 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const request = require('request')
-const AIMLInterpreter = require('aimlinterpreter')
+const AIMLParser = require('aimlparser')
 
 const app = express()
 const port = process.env.PORT || 4000
-const aimlInterpreter = new AIMLInterpreter({ name: 'WarongkornBot' })
-
-aimlInterpreter.loadAIMLFilesIntoArray(['./test-aiml.xml'])
+const aimlParser = new AIMLParser({ name: 'WarongkornBot' })
+aimlParser.load(['./test-aiml.xml']
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
@@ -16,17 +15,14 @@ app.use(bodyParser.json())
 app.post('/webhook', (req, res) => {
   let reply_token = req.body.events[0].replyToken
   let msg = req.body.events[0].message.text
-  aimlInterpreter.findAnswerInLoadedAIMLFiles(
-    msg,
-    (answer, wildCardArray, input) => {
-      reply(reply_token, answer)
-    }
-  )
-  res.sendStatus(200)
+  aimlParser.getResult(msg, (answer, wildCardArray, input) => {
+        reply(reply_token, answer)
+    })
+    res.sendStatus(200)
+ 
 })
 
 app.listen(port)
-
 function reply(reply_token, msg) {
   let headers = {
     'Content-Type': 'application/json',
@@ -60,6 +56,7 @@ function reply(reply_token, msg) {
 // const express = require('express')
 // const bodyParser = require('body-parser')
 // const request = require('request')
+
 // const app = express()
 // const port = process.env.PORT || 4000
 // app.use(bodyParser.urlencoded({ extended: false }))
