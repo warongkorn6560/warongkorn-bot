@@ -100,8 +100,7 @@ app.post('/webhook', (req, res) => {
   // let msg = req.body.events[0].message.text
   aimlInterpreter.findAnswerInLoadedAIMLFiles(
     req.body.events[0].message.text,
-    (answer, wildCardArray, input) =>
-      reply(reply_token, answer(req.body.events[0].message.text))
+    (answer, wildCardArray, input) => reply(reply_token, answer)
   )
   res.sendStatus(200)
 })
