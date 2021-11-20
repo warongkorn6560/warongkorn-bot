@@ -111,8 +111,8 @@ app.post('/webhook', (req, res) => {
   // aimlPromise(msg).then((res) => reply(reply_token, res))
 
   aimlInterpreter.findAnswerInLoadedAIMLFiles(
-    req.body.events[0].message.text,
-    (answer, wildCardArray, input) => reply(reply_token, input)
+    msg,
+    (answer, wildCardArray, input) => reply(reply_token, answer)
   )
   res.sendStatus(200)
 })
