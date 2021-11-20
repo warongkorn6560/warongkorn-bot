@@ -104,14 +104,12 @@ function reply(reply_token, msg) {
   )
 }
 
-async app.post('/webhook', (req, res) => {
+app.post('/webhook', (req, res) => {
   let reply_token = req.body.events[0].replyToken
   let msg = req.body.events[0].message.text
 
-  await reply(reply_token, aimlPromise(msg))
-  
-  
-  
+  aimlPromise(msg).then((res) => reply(reply_token, res))
+
   // aimlInterpreter.findAnswerInLoadedAIMLFiles(
   //   req.body.events[0].message.text,
   //   (answer, wildCardArray, input) => reply(reply_token, input)
