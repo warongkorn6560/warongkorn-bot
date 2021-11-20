@@ -7,7 +7,9 @@ const AIMLParser = require('aimlparser')
 const app = express()
 const port = process.env.PORT || 4000
 const aimlParser = new AIMLParser({ name: 'WarongkornBot' })
-aimlParser.load(['./test-aiml.xml']
+aimlParser.load(['./test-aiml.xml'])
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 function reply(reply_token, msg) {
   let headers = {
     'Content-Type': 'application/json',
@@ -36,20 +38,17 @@ function reply(reply_token, msg) {
     }
   )
 }
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
 
 app.post('/webhook', (req, res) => {
   let reply_token = req.body.events[0].replyToken
   let msg = req.body.events[0].message.text
   aimlParser.getResult(msg, (answer, wildCardArray, input) => {
-        reply(reply_token, input)
-    })
-    res.sendStatus(200)
+    reply(reply_token, input)
+  })
+  res.sendStatus(200)
 })
 
 app.listen(port)
-
 
 //AIML Interpreter
 
