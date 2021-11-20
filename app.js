@@ -14,11 +14,10 @@ app.post('/webhook', (req, res) => {
   let reply_token = req.body.events[0].replyToken
   let msg = req.body.events[0].message.text
   aimlParser.getResult(msg, (answer, wildCardArray, input) => {
-    reply(reply_token, answer)
+    reply(reply_token, 'what the fuck is this =>' + answer)
   })
   res.sendStatus(200)
 })
-
 app.listen(port)
 
 function reply(reply_token, msg) {
