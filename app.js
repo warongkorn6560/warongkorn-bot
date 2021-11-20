@@ -63,6 +63,17 @@ const port = process.env.PORT || 4000
 const aimlInterpreter = new AIMLInterpreter({ name: 'HelloBot', age: '25' })
 
 aimlInterpreter.loadAIMLFilesIntoArray(['./test.aiml.xml'])
+const aimlPromise = function (question) {
+  return new Promise(function (resolve, reject) {
+    aimlInterpreter.findAnswerInLoadedAIMLFiles(
+      question,
+      function (answer, wildCardArray, input) {
+        return resolve(answer)
+        //should also handle reject!!! this is demo code only :)
+      }
+    )
+  })
+}
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
@@ -96,10 +107,12 @@ function reply(reply_token, msg) {
 app.post('/webhook', (req, res) => {
   let reply_token = req.body.events[0].replyToken
   // let msg = req.body.events[0].message.text
-  aimlInterpreter.findAnswerInLoadedAIMLFiles(
-    req.body.events[0].message.text,
-    (answer, wildCardArray, input) => reply(reply_token, input)
-  )
+
+  reply(reply_token, aimlPromise(req.body.events[0].message.text))
+  // aimlInterpreter.findAnswerInLoadedAIMLFiles(
+  //   req.body.events[0].message.text,
+  //   (answer, wildCardArray, input) => reply(reply_token, input)
+  // )
   res.sendStatus(200)
 })
 
