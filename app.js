@@ -63,9 +63,6 @@ const port = process.env.PORT || 4000
 const aimlInterpreter = new AIMLInterpreter({ name: 'HelloBot', age: '25' })
 
 aimlInterpreter.loadAIMLFilesIntoArray(['./test.aiml.xml'])
-let callback = function (reply_token, answer) {
-  reply(reply_token, answer)
-}
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
@@ -101,7 +98,7 @@ app.post('/webhook', (req, res) => {
   // let msg = req.body.events[0].message.text
   aimlInterpreter.findAnswerInLoadedAIMLFiles(
     req.body.events[0].message.text,
-    callback(reply_token, answer)
+    (answer, wildCardArray, input) => reply(reply_token, input)
   )
   res.sendStatus(200)
 })
