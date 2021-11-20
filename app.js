@@ -63,24 +63,8 @@ const port = process.env.PORT || 4000
 const aimlInterpreter = new AIMLInterpreter({ name: 'HelloBot' })
 
 aimlInterpreter.loadAIMLFilesIntoArray(['./test-aiml.xml'])
-
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-
-app.post('/webhook', (req, res) => {
-  let reply_token = req.body.events[0].replyToken
-  // let msg = req.body.events[0].message.text
-  let test = aimlInterpreter.findAnswerInLoadedAIMLFiles(
-    req.body.events[0].message.text,
-    (answer, wildCardArray, input) => {
-      reply(reply_token, answer)
-    }
-  )
-  reply(reply_token, test)
-  res.sendStatus(200)
-})
-
-app.listen(port)
 
 function reply(reply_token, msg) {
   let headers = {
@@ -110,6 +94,21 @@ function reply(reply_token, msg) {
     }
   )
 }
+
+app.post('/webhook', (req, res) => {
+  let reply_token = req.body.events[0].replyToken
+  // let msg = req.body.events[0].message.text
+  let test = aimlInterpreter.findAnswerInLoadedAIMLFiles(
+    req.body.events[0].message.text,
+    (answer, wildCardArray, input) => {
+      reply(reply_token, answer + ' | ' + wildCardArray + ' | ' + input)
+    }
+  )
+  reply(reply_token, test)
+  res.sendStatus(200)
+})
+
+app.listen(port)
 
 // normal reply
 // const express = require('express')
