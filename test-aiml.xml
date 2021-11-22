@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="ISO-8859–1"?>
 <aiml version="2.0">
     <category>
         <pattern>ดีจ้า</pattern>
@@ -7,7 +7,7 @@
 
     <category>
         <pattern>HELLO</pattern>
-        <template>Hello!</template>
+        <template>Hello!!!!!!!!!!</template>
     </category>
 
     <category>
